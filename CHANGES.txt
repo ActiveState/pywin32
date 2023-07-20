@@ -9,6 +9,11 @@ Note that, baring some major issue building and cutting the release, build
 
 So long, Python 2, you served us well!
 
+Since build 228 (->228.1):
+----------------
+
+* Fix for CVE-2021-32559
+
 Since build 227:
 ----------------
 * Support for for win32evtlog.EvtFormatMessage and EvtCreateRenderContext
