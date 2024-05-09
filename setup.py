@@ -142,7 +142,9 @@ if os.path.dirname(this_file):
 
 # Start address we assign base addresses from.  See comment re
 # dll_base_address later in this file...
-dll_base_address = 0x1e200000
+# NOTE: Needs to be set higher now for MSVC Compiler to be happy vis LNK4281
+# dll_base_address = 0x1e200000
+dll_base_address =   0x100000000
 
 # We need to know the platform SDK dir before we can list the extensions.
 def find_platform_sdk_dir():
