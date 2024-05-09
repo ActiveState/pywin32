@@ -255,7 +255,8 @@ def monkeypatched_link(self, target_desc, objects, output_filename, *args, **kw)
     # no manifests for 3.3+
     self._want_assembly_kept = sys.version_info < (3,3) and \
                                (os.path.basename(output_filename).startswith("PyISAPI_loader.dll") or \
-                                os.path.basename(output_filename).startswith("perfmondata.dll") or \
+                                # NOTE: Seeing if we really need a manifest for perfmondata since it doesn't seem to exist
+                                # os.path.basename(output_filename).startswith("perfmondata.dll") or \
                                 os.path.basename(output_filename).startswith("win32ui.pyd") or \
                                 target_desc==self.EXECUTABLE)
     try:
