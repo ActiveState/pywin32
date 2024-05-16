@@ -254,8 +254,9 @@ def monkeypatched_spawn(self, cmd):
 def monkeypatched_link(self, target_desc, objects, output_filename, *args, **kw):
     # no manifests for 3.3+
     self._want_assembly_kept = sys.version_info < (3,3) and \
-                                ( os.path.basename(output_filename).startswith("win32ui.pyd") or \
-                                target_desc==self.EXECUTABLE)
+                                os.path.basename(output_filename).startswith("win32ui.pyd")
+                                # ( os.path.basename(output_filename).startswith("win32ui.pyd") or \
+                                # target_desc==self.EXECUTABLE)
     try:
         return self._orig_link(target_desc, objects, output_filename, *args, **kw)
     finally:
