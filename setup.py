@@ -1001,9 +1001,10 @@ class my_build_ext(build_ext):
 
         # Not sure how to make this completely generic, and there is no
         # need at this stage.
-        if sys.version_info > (2, 7) and sys.version_info < (3, 3):
-            # only stuff built with msvc9 needs this loader.
-            self._build_pycom_loader()
+        # NOTE: I don't think we are building with MSVC9 anymore
+        # if sys.version_info > (2, 7) and sys.version_info < (3, 3):
+        #     # only stuff built with msvc9 needs this loader.
+        #     self._build_pycom_loader()
         self._build_scintilla()
         # Copy cpp lib files needed to create Python COM extensions
         clib_files = (['win32', 'pywintypes%s.lib'],
