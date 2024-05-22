@@ -33,7 +33,7 @@ VENDOR=BORLAND
 
 CC=cl
 RC=rc
-LD=C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\1 4.29.30133\bin\Hostx64\x64\link.exe
+LD=aslink
 
 #-Zc:forScope -Zc:wchar_t
 CXXFLAGS=-Zi -TP -W4
