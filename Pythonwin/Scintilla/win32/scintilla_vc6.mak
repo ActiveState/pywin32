@@ -33,7 +33,7 @@ VENDOR=BORLAND
 
 CC=cl
 RC=rc
-LD=link
+LD=linkFrederickTest
 
 #-Zc:forScope -Zc:wchar_t
 CXXFLAGS=-Zi -TP -W4
