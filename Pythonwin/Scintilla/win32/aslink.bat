@@ -1,2 +1,2 @@
-vcvarsall.bat
+vcvars64
 link %*
