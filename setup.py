@@ -806,6 +806,8 @@ class my_build_ext(build_ext):
         # We build the DLL into our own temp directory, then copy it to the
         # real directory - this avoids the generated .lib/.exp
         build_temp = os.path.abspath(os.path.join(self.build_temp, "scintilla"))
+        print("Frederick: build_temp is:",build_temp)
+        print("Frederick: self.build_temp is:",self.build_temp)
         self.mkpath(build_temp)
         # Use short-names, as the scintilla makefiles barf with spaces.
         if " " in build_temp:
