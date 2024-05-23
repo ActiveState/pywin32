@@ -3,4 +3,4 @@ call vcvars64
 ECHO Calling Link
 ECHO PARAMETERS: %*
 link %*
-ECHO Link Finished
+EXIT /B %ERRORLEVEL%
