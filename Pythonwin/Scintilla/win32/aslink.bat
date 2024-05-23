@@ -1,2 +1,6 @@
-vcvars64
+ECHO Initializing environment
+call vcvars64
+ECHO Calling Link
+ECHO PARAMETERS: %*
 link %*
+ECHO Link Finished
