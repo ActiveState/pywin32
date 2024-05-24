@@ -846,8 +846,8 @@ class my_build_ext(build_ext):
             base_name = "scintilla.dll"
         self.copy_file(
                     # We are hard coding the location, and it doesn't need scintilla in the path anymore
-                    # os.path.join(build_temp, base_name),
-                    os.path.join(build_temp, "scintilla", base_name),
+                    os.path.join(build_temp, base_name),
+                    # os.path.join(build_temp, "scintilla", base_name),
                     os.path.join(self.build_lib, "pythonwin"))
         # Restore self.build _temp
         # self.build_temp = save_self_build_temp
