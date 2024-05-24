@@ -810,7 +810,10 @@ class my_build_ext(build_ext):
         print("Frederick: self.build_temp is:",self.build_temp)
         build_temp="C:\\ASTemp"
         print("Frederick: build_temp reset to:",build_temp)
+        self.build_temp = build_temp
         self.mkpath(build_temp)
+        # Try to get us all on the same page about where things will be
+        self.build_temp = build_temp
         # Use short-names, as the scintilla makefiles barf with spaces.
         if " " in build_temp:
             # ack - can't use win32api!!!  This is the best I could come up
