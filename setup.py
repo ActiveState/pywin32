@@ -797,7 +797,7 @@ class my_build_ext(build_ext):
         path = "pythonwin\\Scintilla"
         makefile = "makefile_pythonwin"
         makeargs = []
-        save_self_build_temp = None
+        # save_self_build_temp = None
 
         if self.debug:
             makeargs.append("DEBUG=1")
@@ -807,13 +807,13 @@ class my_build_ext(build_ext):
         # We build the DLL into our own temp directory, then copy it to the
         # real directory - this avoids the generated .lib/.exp
         build_temp = os.path.abspath(os.path.join(self.build_temp, "scintilla"))
-        print("Frederick: build_temp is:",build_temp)
-        print("Frederick: self.build_temp is:",self.build_temp)
-        build_temp="C:\\ASTemp"
-        print("Frederick: build_temp reset to:",build_temp)
+        # print("Frederick: build_temp is:",build_temp)
+        # print("Frederick: self.build_temp is:",self.build_temp)
+        # build_temp="C:\\ASTemp"
+        # print("Frederick: build_temp reset to:",build_temp)
         # Save self.build_temp so we can restore it later
-        save_self_build_temp = self.build_temp
-        self.build_temp = build_temp
+        # save_self_build_temp = self.build_temp
+        # self.build_temp = build_temp
         self.mkpath(build_temp)
         # Try to get us all on the same page about where things will be
         self.build_temp = build_temp
@@ -846,11 +846,11 @@ class my_build_ext(build_ext):
             base_name = "scintilla.dll"
         self.copy_file(
                     # We are hard coding the location, and it doesn't need scintilla in the path anymore
-                    # os.path.join(build_temp, "scintilla", base_name),
-                    os.path.join(build_temp, base_name),
+                    # os.path.join(build_temp, base_name),
+                    os.path.join(build_temp, "scintilla", base_name),
                     os.path.join(self.build_lib, "pythonwin"))
         # Restore self.build _temp
-        self.build_temp = save_self_build_temp
+        # self.build_temp = save_self_build_temp
 
     def _build_pycom_loader(self):
         # the base compiler strips out the manifest from modules it builds
