@@ -1213,7 +1213,7 @@ class my_build_ext(build_ext):
                 # are expected to be pywintypes.lib.
                 name1 = "%s%d%d%s" % (ext.name, sys.version_info[0], sys.version_info[1], extra)
                 name2 = "%s%s" % (ext.name, extra)
-                print(f"Frederick: \nName1 [{name1}] \nName2: [{name2}]")
+                print("Frederick: \nName1 [%s] \nName2: [%s]"%(name1,name2))
             elif ext.name in ("win32ui",):
                 name1 = name2 = ext.name + extra
             else:
