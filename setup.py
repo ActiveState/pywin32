@@ -1230,11 +1230,11 @@ class my_build_ext(build_ext):
                                    os.path.dirname(ext.sources[0]),
                                    name1)
                 dst = os.path.join(old_build_temp, name2)
-                dst2 = os.path.join(old_build_temp, "Scintilla", name2)
+                # dst2 = os.path.join(old_build_temp, "Scintilla", name2)
                 if os.path.abspath(src) != os.path.abspath(dst):
                     self.copy_file(src, dst)#, update=1)
-                if os.path.abspath(src) != os.path.abspath(dst2):
-                    self.copy_file(src, dst2)#, update=1)
+                # if os.path.abspath(src) != os.path.abspath(dst2):
+                #     self.copy_file(src, dst2)#, update=1)
         finally:
             self.build_temp = old_build_temp
             if want_static_crt:
