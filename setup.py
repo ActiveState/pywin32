@@ -219,7 +219,6 @@ def find_platform_sdk_dir():
 # and later, which are all we care about currently)
 from distutils.msvccompiler import MSVCCompiler
 MSVCCompiler._orig_spawn = MSVCCompiler.spawn
-MSVCCompiler._orig_link = MSVCCompiler.link
 
 # We need to override this method for versions where issue7833 *has* landed
 # (ie, 2.7 and 3.2+)
@@ -237,18 +236,16 @@ def manifest_get_embed_info(self, target_desc, ld_args):
             return orig_manifest, rid
     return None
 
-# always monkeypatch it in even though it will only be called in 2.7
-# and 3.2+.
 MSVCCompiler.manifest_get_embed_info = manifest_get_embed_info
 
 def monkeypatched_spawn(self, cmd):
     is_link = cmd[0].endswith("link.exe") or cmd[0].endswith('"link.exe"')
     is_mt = cmd[0].endswith("mt.exe") or cmd[0].endswith('"mt.exe"')
     _want_assembly_kept = getattr(self, '_want_assembly_kept', False)
-    if not _want_assembly_kept and is_mt:
+    if is_mt:
         # We don't want mt.exe run...
         return
-    if not _want_assembly_kept and is_link:
+    if is_link:
         # remove /MANIFESTFILE:... and add MANIFEST:NO
         # (but note that for winxpgui, which specifies a manifest via a
         # .rc file, this is ignored by the linker - the manifest specified
@@ -257,14 +254,14 @@ def monkeypatched_spawn(self, cmd):
             if cmd[i].startswith("/MANIFESTFILE:"):
                 cmd[i] = "/MANIFEST:NO"
                 break
-    if _want_assembly_kept and is_mt:
+    if is_mt:
         # We want mt.exe run with the original manifest
         for i in range(len(cmd)):
             if cmd[i] == "-manifest":
                 cmd[i+1] = cmd[i+1] + ".orig"
                 break
     self._orig_spawn(cmd)
-    if _want_assembly_kept and is_link:
+    if is_link:
         # We want a copy of the original manifest so we can use it later.
         for i in range(len(cmd)):
             if cmd[i].startswith("/MANIFESTFILE:"):
@@ -272,19 +269,7 @@ def monkeypatched_spawn(self, cmd):
                 shutil.copyfile(mfname, mfname + ".orig")
                 break
 
-def monkeypatched_link(self, target_desc, objects, output_filename, *args, **kw):
-    # no manifests for 3.3+
-    self._want_assembly_kept = sys.version_info < (3,3) and \
-                               (os.path.basename(output_filename).startswith("PyISAPI_loader.dll") or \
-                                os.path.basename(output_filename).startswith("perfmondata.dll") or \
-                                os.path.basename(output_filename).startswith("win32ui.pyd") or \
-                                target_desc==self.EXECUTABLE)
-    try:
-        return self._orig_link(target_desc, objects, output_filename, *args, **kw)
-    finally:
-        delattr(self, '_want_assembly_kept')
 MSVCCompiler.spawn = monkeypatched_spawn
-MSVCCompiler.link = monkeypatched_link
 
 
 sdk_info = find_platform_sdk_dir()
@@ -1021,11 +1006,6 @@ class my_build_ext(build_ext):
                 raise RuntimeError("Not a win32 package!")
             self.build_exefile(ext)
 
-        # Not sure how to make this completely generic, and there is no
-        # need at this stage.
-        if sys.version_info > (2, 7) and sys.version_info < (3, 3):
-            # only stuff built with msvc9 needs this loader.
-            self._build_pycom_loader()
         self._build_scintilla()
         # Copy cpp lib files needed to create Python COM extensions
         clib_files = (['win32', 'pywintypes%s.lib'],
@@ -1045,18 +1025,8 @@ class my_build_ext(build_ext):
         # The MFC DLLs.
         target_dir = os.path.join(self.build_lib, "pythonwin")
 
-        # Common values for the MFC lookup over the Visual Studio installation and redist installation.
-        if sys.version_info < (3, 3):
-            mfc_version = "vc90"
-            mfc_libraries = ["mfc90.dll", "mfc90u.dll", "mfcm90.dll", "mfcm90u.dll"]
-        # 3.3 and 3.4 use(d) vs2010 (compiler version 1600, crt=10)
-        elif sys.version_info < (3, 5):
-            mfc_version = "vc100"
-            mfc_libraries = ["mfc100u.dll", "mfcm100u.dll"]
-        # 3.5 and later on vs2015 (compiler version 1900, crt=14)
-        else:
-            mfc_version = "vc140"
-            mfc_libraries = ["mfc140u.dll", "mfcm140u.dll"]
+        mfc_version = "vc140"
+        mfc_libraries = ["mfc140u.dll", "mfcm140u.dll"]
 
         mfc_contents = self.lookupMfcInVisualStudio(mfc_version, mfc_libraries)
         if not mfc_contents:
@@ -1214,7 +1184,7 @@ class my_build_ext(build_ext):
         # with special defines. So we cannot use a shared
         # directory for objects, we must use a special one for each extension.
         old_build_temp = self.build_temp
-        want_static_crt = sys.version_info > (2,6) and ext.name in static_crt_modules
+        want_static_crt = ext.name in static_crt_modules
         if want_static_crt:
             self.compiler.compile_options.remove('/MD')
             self.compiler.compile_options.append('/MT')
@@ -1266,32 +1236,16 @@ class my_build_ext(build_ext):
         # So in the fixed versions we only get the base name, and if the
         # output name is simply 'dir\name' we need to nothing.
 
-        # The pre 3.1 pywintypes
-        if name == "pywin32_system32.pywintypes":
-            return "pywin32_system32\\pywintypes%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
-        # 3.1+ pywintypes
-        elif name == "pywintypes":
+        if name == "pywintypes":
             return "pywintypes%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
-        # pre 3.1 pythoncom
-        elif name == "pywin32_system32.pythoncom":
-            return "pywin32_system32\\pythoncom%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
-        # 3.1+ pythoncom
         elif name == "pythoncom":
             return "pythoncom%d%d%s" % (sys.version_info[0], sys.version_info[1], extra_dll)
-        # Pre 3.1 rest.
-        elif name.endswith("win32.perfmondata"):
-            return "win32\\perfmondata" + extra_dll
+        elif name in ['perfmondata', 'PyISAPI_loader']:
+            return name + extra_dll
         elif name.endswith("win32.pythonservice"):
             return "win32\\pythonservice" + extra_exe
         elif name.endswith("pythonwin.Pythonwin"):
             return "pythonwin\\Pythonwin" + extra_exe
-        elif name.endswith("isapi.PyISAPI_loader"):
-            return "isapi\\PyISAPI_loader" + extra_dll
-        # The post 3.1 rest
-        elif name in ['perfmondata', 'PyISAPI_loader']:
-            return name + extra_dll
-        elif name in ['pythonservice', 'Pythonwin']:
-            return name + extra_exe
 
         return build_ext.get_ext_filename(self, name)
 
