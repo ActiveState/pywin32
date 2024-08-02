@@ -209,7 +209,7 @@ def find_platform_sdk_dir():
 # to prevent the extension from loading.  For more details, see
 # http://bugs.python.org/issue7833 (which has landed for Python 2.7 and on 3.2
 # and later, which are all we care about currently)
-from distutils.msvc9compiler import MSVCCompiler
+from distutils.msvccompiler import MSVCCompiler
 MSVCCompiler._orig_spawn = MSVCCompiler.spawn
 MSVCCompiler._orig_link = MSVCCompiler.link
 
@@ -900,18 +900,18 @@ class my_build_ext(build_ext):
         mfc_dir = "Microsoft.{}.MFC".format(mfc_version.upper())
         mfc_contents = []
         # 2.7, 3.0, 3.1 and 3.2 all use(d) vs2008 (compiler version 1500)
-        if sys.version_info < (3, 3):
-            product_key = "SOFTWARE\\Microsoft\\VisualStudio\\9.0\\Setup\\VC"
-            plat_dir_64 = "amd64"
-            mfc_files = mfc_libraries + ["Microsoft.VC90.MFC.manifest", ]
+        # if sys.version_info < (3, 3):
+        #   product_key = "SOFTWARE\\Microsoft\\VisualStudio\\9.0\\Setup\\VC"
+        #    plat_dir_64 = "amd64"
+        #    mfc_files = mfc_libraries + ["Microsoft.VC90.MFC.manifest", ]
         # 3.3 and 3.4 use(d) vs2010 (compiler version 1600, crt=10)
-        elif sys.version_info < (3, 5):
-            product_key = "SOFTWARE\\Microsoft\\VisualStudio\\10.0\\Setup\\VC"
-            mfc_files = mfc_libraries
+        # elif sys.version_info < (3, 5):
+        #    product_key = "SOFTWARE\\Microsoft\\VisualStudio\\10.0\\Setup\\VC"
+        #    mfc_files = mfc_libraries
         # 3.5 and later on vs2015 (compiler version 1900, crt=14)
-        else:
-            product_key = "SOFTWARE\\Microsoft\\VisualStudio\\14.0\\Setup\\VC"
-            mfc_files = mfc_libraries
+        # else:
+        product_key = "SOFTWARE\\Microsoft\\VisualStudio\\14.0\\Setup\\VC"
+        mfc_files = mfc_libraries
 
         # On a 64bit host, the value we are looking for is actually in
         # SysWow64Node - but that is only available on xp and later.
