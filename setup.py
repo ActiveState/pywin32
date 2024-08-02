@@ -129,6 +129,14 @@ try:
 except ValueError:
     skip_verstamp = False
 
+# ActiveState
+# Allow us to use skip-verstamp without using the command line.
+if os.environ.get('SKIP_VERSTAMP') == "1":
+    print("SKIP_VERSTAMP is set. Skipping Verstamp.")
+    skip_verstamp = True
+else:
+    print("SKIP_VERSTAMP is not set. Set VERSTAMP=1 to skip version stamp.")
+
 try:
     this_file = __file__
 except NameError:
