@@ -1904,24 +1904,24 @@ com_extensions += [
                         %(mapi)s/mapi_stub_library/MapiStubLibrary.cpp
                         %(mapi)s/mapi_stub_library/StubUtils.cpp
                         """ % dirs).split()),
-    #WinExt_win32com_mapi('exchange', libraries="advapi32",
-    #                     include_dirs=["%(mapi)s/mapi_headers" % dirs],
-    #                     sources=("""
-    #                              %(mapi)s/exchange.i         %(mapi)s/exchange.cpp
-    #                              %(mapi)s/PyIExchangeManageStore.i %(mapi)s/PyIExchangeManageStore.cpp
-    #                              %(mapi)s/PyIExchangeManageStoreEx.i %(mapi)s/PyIExchangeManageStoreEx.cpp
-    #                              %(mapi)s/mapiutil.cpp
-    #                              %(mapi)s/exchangeguids.cpp
-    #                              %(mapi)s/mapi_stub_library/MapiStubLibrary.cpp
-    #                              %(mapi)s/mapi_stub_library/StubUtils.cpp
-    #                              """ % dirs).split()),
-    #WinExt_win32com_mapi('exchdapi', libraries="advapi32",
-    #                     include_dirs=["%(mapi)s/mapi_headers" % dirs],
-    #                     sources=("""
-    #                              %(mapi)s/exchdapi.i         %(mapi)s/exchdapi.cpp
-    #                              %(mapi)s/mapi_stub_library/MapiStubLibrary.cpp
-    #                              %(mapi)s/mapi_stub_library/StubUtils.cpp
-    #                              """ % dirs).split()),
+    WinExt_win32com_mapi('exchange', libraries="advapi32 legacy_stdio_definitions",
+                         include_dirs=["%(mapi)s/mapi_headers" % dirs],
+                         sources=("""
+                                  %(mapi)s/exchange.i         %(mapi)s/exchange.cpp
+                                  %(mapi)s/PyIExchangeManageStore.i %(mapi)s/PyIExchangeManageStore.cpp
+                                  %(mapi)s/PyIExchangeManageStoreEx.i %(mapi)s/PyIExchangeManageStoreEx.cpp
+                                  %(mapi)s/mapiutil.cpp
+                                  %(mapi)s/exchangeguids.cpp
+                                  %(mapi)s/mapi_stub_library/MapiStubLibrary.cpp
+                                  %(mapi)s/mapi_stub_library/StubUtils.cpp
+                                  """ % dirs).split()),
+    WinExt_win32com_mapi('exchdapi', libraries="advapi32 legacy_stdio_definitions",
+                         include_dirs=["%(mapi)s/mapi_headers" % dirs],
+                         sources=("""
+                                  %(mapi)s/exchdapi.i         %(mapi)s/exchdapi.cpp
+                                  %(mapi)s/mapi_stub_library/MapiStubLibrary.cpp
+                                  %(mapi)s/mapi_stub_library/StubUtils.cpp
+                                  """ % dirs).split()),
     WinExt_win32com('shell', libraries='shell32', pch_header="shell_pch.h",
                     windows_h_version = 0x600,
                     sources=("""
